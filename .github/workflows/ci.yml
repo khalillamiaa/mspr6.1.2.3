@@ -1,6 +1,6 @@
 name: CI Pipeline for MSPR Project
 
-# Déclenche le workflow à chaque push sur la branche main ou sur une Pull Request
+# Déclenche le workflow à chaque push ou pull request sur la branche main
 on:
   push:
     branches: [ main ]
@@ -8,32 +8,40 @@ on:
     branches: [ main ]
 
 jobs:
-  # Le nom du "job" est "build-and-test"
   build-and-test:
-    # Le type de machine sur lequel le job va tourner (Ubuntu est le standard)
+    # Le job tourne sur une machine Ubuntu
     runs-on: ubuntu-latest
 
     # Les étapes du job
     steps:
-      # Étape 1: Récupérer le code de votre dépôt
+      # 1. Récupérer le code du dépôt
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Étape 2: Configurer Python
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.10'
-
-      # Étape 3: Installer les dépendances
-      - name: Install dependencies
+      # 2. Copier le fichier .env d'exemple
+      # On a besoin d'un fichier .env pour que docker-compose fonctionne
+      - name: Create .env file
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest requests # S'assurer que les outils de test sont bien là
+          echo "DATABASE_URL=postgresql://mspr_user:Mspr6.1%40@db:5432/mspr_db" > .env
+          echo "KAGGLE_USERNAME=dummy" >> .env
+          echo "KAGGLE_KEY=dummy" >> .env
 
-      # Étape 4: Lancer les tests
-      # Note : Pour l'instant, ce test ne fonctionnera pas car il a besoin de l'API.
-      # C'est une première étape. Une version plus avancée lancerait les services avec Docker.
-      - name: Run tests with pytest
-        run: pytest
+      # 3. Lancer les services avec Docker Compose
+      # C'EST L'ÉTAPE CLÉ. On lance la BDD et l'API en arrière-plan (-d).
+      - name: Build and run Docker containers
+        run: docker-compose up --build -d
+
+      # 4. Attendre que les services soient prêts
+      # On ajoute une petite pause pour être sûr que l'API a eu le temps de démarrer.
+      - name: Wait for services to be ready
+        run: sleep 20
+
+      # 5. Installer les dépendances de test localement sur la machine GitHub
+      - name: Install test dependencies
+        run: |
+          pip install pytest requests python-dotenv
+
+      # 6. Lancer les tests
+      # Pytest va maintenant pouvoir se connecter à l'API qui tourne dans Docker.
+      - name: Run tests
+        run: pytest tests/
