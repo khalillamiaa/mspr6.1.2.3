@@ -194,7 +194,22 @@ Pour restaurer la base de données à partir d'un fichier de sauvegarde nommé `
 
 
 
+### Procédure de Rollback
 
+En cas de problème après une mise à jour, la méthode la plus simple pour revenir à la version précédente est d'utiliser l'historique de Git :
+
+1.  Affichez l'historique des commits :
+    ```sh
+    git log
+    ```
+2.  Identifiez le commit de la version stable précédente et revenez-y :
+    ```sh
+    git checkout <id_du_commit_precedent>
+    ```
+3.  Reconstruisez l'image Docker avec l'ancienne version du code :
+    ```sh
+    docker-compose up --build -d
+    ```
 
 
 1- python -m venv .venv
