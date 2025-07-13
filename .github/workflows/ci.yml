@@ -1,6 +1,5 @@
 name: CI Pipeline for MSPR Project
 
-# Déclenche le workflow à chaque push ou pull request sur la branche main
 on:
   push:
     branches: [ main ]
@@ -9,39 +8,29 @@ on:
 
 jobs:
   build-and-test:
-    # Le job tourne sur une machine Ubuntu
     runs-on: ubuntu-latest
 
-    # Les étapes du job
     steps:
-      # 1. Récupérer le code du dépôt
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Copier le fichier .env d'exemple
-      # On a besoin d'un fichier .env pour que docker-compose fonctionne
       - name: Create .env file
         run: |
           echo "DATABASE_URL=postgresql://mspr_user:Mspr6.1%40@db:5432/mspr_db" > .env
           echo "KAGGLE_USERNAME=dummy" >> .env
           echo "KAGGLE_KEY=dummy" >> .env
 
-      # 3. Lancer les services avec Docker Compose
-      # C'EST L'ÉTAPE CLÉ. On lance la BDD et l'API en arrière-plan (-d).
+      # --- CORRECTION ICI ---
+      # On utilise "docker compose" (avec un espace) au lieu de "docker-compose"
       - name: Build and run Docker containers
-        run: docker-compose up --build -d
+        run: docker compose up --build -d
 
-      # 4. Attendre que les services soient prêts
-      # On ajoute une petite pause pour être sûr que l'API a eu le temps de démarrer.
       - name: Wait for services to be ready
         run: sleep 20
 
-      # 5. Installer les dépendances de test localement sur la machine GitHub
       - name: Install test dependencies
         run: |
           pip install pytest requests python-dotenv
 
-      # 6. Lancer les tests
-      # Pytest va maintenant pouvoir se connecter à l'API qui tourne dans Docker.
       - name: Run tests
         run: pytest tests/
