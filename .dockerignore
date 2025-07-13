@@ -1,0 +1,22 @@
+# Ignorer l'environnement virtuel local
+.venv
+
+# Ignorer les caches Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorer les fichiers de configuration des éditeurs
+.vscode/
+.idea/
+
+# Ignorer les fichiers Git
+.git
+.gitignore
+
+# Ignorer les fichiers de configuration Docker (pour ne pas s'inclure soi-même)
+.dockerignore
+Dockerfile
+docker-compose.yml
+

@@ -1,0 +1,39 @@
+name: CI Pipeline for MSPR Project
+
+# Déclenche le workflow à chaque push sur la branche main ou sur une Pull Request
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Le nom du "job" est "build-and-test"
+  build-and-test:
+    # Le type de machine sur lequel le job va tourner (Ubuntu est le standard)
+    runs-on: ubuntu-latest
+
+    # Les étapes du job
+    steps:
+      # Étape 1: Récupérer le code de votre dépôt
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Étape 2: Configurer Python
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      # Étape 3: Installer les dépendances
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest requests # S'assurer que les outils de test sont bien là
+
+      # Étape 4: Lancer les tests
+      # Note : Pour l'instant, ce test ne fonctionnera pas car il a besoin de l'API.
+      # C'est une première étape. Une version plus avancée lancerait les services avec Docker.
+      - name: Run tests with pytest
+        run: pytest

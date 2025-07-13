@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: postgres_db_mspr
+    environment:
+      - POSTGRES_USER=mspr_user
+      - POSTGRES_PASSWORD=Mspr6.1@
+      - POSTGRES_DB=mspr_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    container_name: fast_api_mspr
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://mspr_user:Mspr6.1%40@db:5432/mspr_db
+
+volumes:
+  postgres_data:

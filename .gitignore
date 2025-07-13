@@ -1,0 +1,12 @@
+# Environnements virtuels
+.venv/
+env/
+
+# Fichiers de données
+*.csv
+*.xlsx
+*.json
+*.zip
+
+.env
+

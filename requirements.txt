@@ -1,0 +1,13 @@
+# requirements.txt
+fastapi
+uvicorn[standard]
+requests
+psycopg2-binary
+SQLAlchemy
+pandas
+streamlit
+plotly
+python-dotenv
+kaggle
+scikit-learn
+prophet
