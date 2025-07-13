@@ -169,7 +169,28 @@ streamlit run mspr6.1/scripts/dashboard.py
 ---
 
 
+### Sauvegarde de la Base de Données
 
+Pour sauvegarder les données de la base PostgreSQL qui tourne dans Docker, exécutez la commande suivante depuis votre terminal :
+
+```sh
+docker exec postgres_db_mspr pg_dump -U mspr_user -d mspr_db > sauvegarde.sql
+
+#### **Procédure de Restauration de la Base de Données**
+
+```markdown
+### Restauration de la Base de Données
+
+Pour restaurer la base de données à partir d'un fichier de sauvegarde nommé `sauvegarde.sql` :
+
+1.  Copiez le fichier de sauvegarde dans le conteneur :
+    ```sh
+    docker cp sauvegarde.sql postgres_db_mspr:/sauvegarde.sql
+    ```
+2.  Exécutez la commande de restauration :
+    ```sh
+    docker exec -it postgres_db_mspr psql -U mspr_user -d mspr_db -f /sauvegarde.sql
+    ```
 
 
 
