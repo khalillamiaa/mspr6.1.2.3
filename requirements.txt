@@ -11,3 +11,4 @@ python-dotenv
 kaggle
 scikit-learn
 prophet
+pytest
