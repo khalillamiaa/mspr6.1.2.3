@@ -20,8 +20,6 @@ jobs:
           echo "KAGGLE_USERNAME=dummy" >> .env
           echo "KAGGLE_KEY=dummy" >> .env
 
-      # --- CORRECTION ICI ---
-      # On utilise "docker compose" (avec un espace) au lieu de "docker-compose"
       - name: Build and run Docker containers
         run: docker compose up --build -d
 
@@ -31,6 +29,7 @@ jobs:
       - name: Install test dependencies
         run: |
           pip install pytest requests python-dotenv
+          pip install -r requirements.txt
 
       - name: Run tests
         run: pytest tests/
