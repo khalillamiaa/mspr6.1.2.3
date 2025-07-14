@@ -1,30 +1,21 @@
 name: CI Pipeline for MSPR Project
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Create .env file
         run: |
           echo "DATABASE_URL=postgresql://mspr_user:Mspr6.1%40@db:5432/mspr_db" > .env
-          echo "KAGGLE_USERNAME=dummy" >> .env
-          echo "KAGGLE_KEY=dummy" >> .env
-
       - name: Build and run Docker containers
         run: docker compose up --build -d
-
       - name: Wait for services to be ready
         run: sleep 20
-
       - name: Run tests inside the app container
         run: docker compose exec -T app pytest tests/
