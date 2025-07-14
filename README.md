@@ -212,17 +212,22 @@ En cas de problème après une mise à jour, la méthode la plus simple pour rev
     ```
 
 
-1- python -m venv .venv
-2- .venv\Scripts\activate
-3- pip install -r requirements.txt
+Pour lancer le processus complet de ré-entraînement :
 
-4- ouvrir postgresql 
-CREATE USER mspr_user WITH PASSWORD 'Mspr6.1@';
-CREATE DATABASE mspr_db;
-GRANT ALL PRIVILEGES ON DATABASE mspr_db TO mspr_user;
+1.  **Mettez à jour les données** en lançant les scripts de pipeline initiaux :
+    ```sh
+    python mspr6.1/scripts/download_data.py
+    python mspr6.1/scripts/clean_datasets.py
+    python mspr6.1/scripts/store_data.py
+    ```
 
-5-python scripts/clean_datasets.py
-6-python scripts/store_data.py
+2.  **Lancez le script de ré-entraînement** depuis la racine du projet :
+    ```sh
+    python retrain_models.py
+    ```
+    Ce script va automatiquement exécuter le processus d'entraînement et de validation, et écrasera les anciens fichiers `.joblib` et `performance.csv` avec les nouvelles versions.
 
-7-uvicorn api.api:app --reload
-8-streamlit run scripts/dashboard.py
+3.  **Redémarrez le service de l'API** pour qu'il charge les nouveaux modèles :
+    ```sh
+    docker compose restart app
+    ```

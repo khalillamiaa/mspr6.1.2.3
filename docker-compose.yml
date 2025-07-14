@@ -1,4 +1,5 @@
 services:
+  # Service 1: La base de données PostgreSQL
   db:
     image: postgres:14-alpine
     container_name: postgres_db_mspr
@@ -11,6 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # Service 2: Votre application (API)
   app:
     container_name: fast_api_mspr
     build: .
@@ -18,8 +20,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://mspr_user:Mspr6.1%40@db:5432/mspr_db
+    env_file:
+      - .env.api
 
 volumes:
   postgres_data:
