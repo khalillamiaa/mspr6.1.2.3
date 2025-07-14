@@ -26,10 +26,5 @@ jobs:
       - name: Wait for services to be ready
         run: sleep 20
 
-      - name: Install test dependencies
-        run: |
-          pip install pytest requests python-dotenv
-          pip install -r requirements.txt
-
-      - name: Run tests
-        run: pytest tests/
+      - name: Run tests inside the app container
+        run: docker compose exec -T app pytest tests/
